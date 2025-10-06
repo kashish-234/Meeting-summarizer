@@ -1,0 +1,33 @@
+# Core
+torch
+transformers
+faster-whisper
+sentencepiece
+tqdm
+
+# NLP & utilities
+spacy
+regex
+numpy
+
+# TTS (Coqui) optional - heavy; fallback to pyttsx3
+TTS
+pyttsx3
+
+# Video/audio composition
+moviepy
+Pillow
+pydub
+soundfile
+
+# Web UI
+gradio
+
+# For typing & packaging
+uvicorn
+python-multipart
+langchain
+google-cloud-aiplatform
+langchain-google-genai
+langgraph
+google-generativeai
