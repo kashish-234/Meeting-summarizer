@@ -75,7 +75,9 @@ venv\Scripts\Activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
+```
 Launch the Gradio UI:
 
 ```powershell
 python -m ui.app_gradio
+```
