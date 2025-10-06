@@ -154,7 +154,7 @@ def process_file(file, input_type, use_langchain=False, enable_logging=False):
     status_messages = []
     workflow_state = None
 
-    if use_langchain and run_pipeline_agents is not None:
+    if use_langgraph and run_pipeline_agents is not None:
         status_messages.append("LangGraph orchestration requested.")
         if inspect_workflow is not None:
             try:
@@ -174,7 +174,7 @@ def process_file(file, input_type, use_langchain=False, enable_logging=False):
             )
             result = run_pipeline(path, input_type=input_type)
     else:
-        if use_langchain and run_pipeline_agents is None:
+        if use_langraph and run_pipeline_agents is None:
             status_messages.append("LangGraph orchestrator unavailable. Using deterministic pipeline.")
         result = run_pipeline(path, input_type=input_type)
 

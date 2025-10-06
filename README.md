@@ -9,40 +9,24 @@ A **Gradio UI** allows teams to trigger the workflow interactively and monitor e
 
 ## 🧠 How It Works — LangGraph + Agents Overview
 
-The summarizer uses a **graph-based orchestration layer (LangGraph)** to coordinate a set of specialized AI agents.  
-Each agent focuses on a single capability, while LangGraph manages the flow of data, context, and fallbacks between them.
+The summarizer runs a **five-node LangGraph workflow** that mirrors the deterministic pipeline used elsewhere in the project. Each node focuses on one responsibility and hands its output to the next step:
 
 | Agent | Description | Input → Output |
-|--------|--------------|----------------|
-| 🎧 **Transcription Agent** | Converts raw audio/video into text via ASR (e.g., Whisper). | Audio/Video → Text |
-| 🗣️ **Speaker Identification Agent** | Detects and labels speakers using embeddings or metadata. | Transcript → Speaker-tagged text |
-| 🧩 **Contextual Summarizer Agent** | Generates concise, structured meeting summaries using Gemini 2.5 Pro. | Transcript → Key insights |
-| 📝 **Action Item Extraction Agent** | Identifies follow-ups, decisions, owners, and deadlines. | Summary → Task list (JSON) |
-| 💬 **Sentiment & Engagement Analyzer** | Evaluates tone, sentiment, and participation balance. | Transcript → Sentiment metrics |
-| 📚 **Knowledge Enrichment Agent (optional)** | Retrieves background context through RAG (retrieval-augmented generation). | Transcript → Enriched summary |
-| 🕸️ **LangGraph Orchestrator (Master Agent)** | Connects and supervises all sub-agents, handling dependencies, retries, and memory. | Agents → Unified output |
+|--------|-------------|----------------|
+| 🎧 **Transcribe** | Converts audio/video to text or reads text files directly. | Media/Text → Transcript |
+| 🧩 **Summarize** | Generates a concise meeting recap with Gemini (falls back to local summarizer if needed). | Transcript → Summary |
+| � **Insights** | Extracts action items and discussion topics via spaCy + sentence transformers (or Gemini JSON). | Transcript → `{actions, topics}` |
+| � **Narrate** | Produces a spoken version of the summary using the configured TTS engine. | Summary → Audio file |
+| 🎬 **Compose Video** | Renders a highlight reel with animated slides and narrated audio via MoviePy. | Summary + Audio → Video |
 
 ### 🔗 LangGraph Integration
-- **Graph-based workflow:** Each agent is a LangGraph node with explicit inputs and outputs.  
-- **Memory management:** Persistent `ConversationBufferMemory` maintains context across stages.  
-- **Parallel execution:** Compatible agents (e.g., sentiment and action-item extraction) run concurrently for speed.  
-- **Fallback logic:** If a node fails (e.g., TTS unavailable), deterministic summarization ensures continuity.  
-- **Visualization:** Gradio UI displays live LangGraph node execution and logs for transparency.
+- **Sequential graph:** Nodes execute in order with automatic skips if results already exist.
+- **LLM optionality:** If Gemini is unavailable, the graph falls back to deterministic summarization and insight extraction.
+- **Deterministic safety net:** Missing audio/video assets trigger regeneration using the local pipeline to guarantee complete outputs.
+- **Live inspection:** The Gradio UI exposes current node status and dependency health through the `inspect_workflow()` endpoint.
 
 #### Example Flow
-Audio / Video / Text
-↓
-[Transcription Agent]
-↓
-[Speaker ID Agent]
-↓
-[Summarizer Agent]
-↓
-[Action Item + Sentiment Agents]
-↓
-[TTS / Highlight Composer]
-↓
-Structured Report + Media Output
+Audio / Video / Text → Transcribe → Summarize → Insights → Narrate → Compose Video → Summary + Media Bundle
 
 
 ---

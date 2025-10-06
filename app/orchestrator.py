@@ -5,22 +5,22 @@ from .tts import generate_tts
 from .video_composer import compose_video
 from .agent_planner import create_plan
 
-# Prefer a langchain-based orchestrator when available to demonstrate
-# agentic orchestration. If langchain isn't installed, fall back to the
+# Prefer the LangGraph orchestrator when available to demonstrate
+# agentic orchestration. If LangGraph isn't installed, fall back to the
 # original procedural pipeline.
 try:
-    from .langgraph_orchestrator import run_pipeline_langchain
+    from .langgraph_orchestrator import run_pipeline_agents
 except Exception:
-    run_pipeline_langchain = None
+    run_pipeline_agents = None
 
 def run_pipeline(file_path, input_type="audio"):
-    # If LangChain orchestrator is available, prefer it to demonstrate
+    # If LangGraph orchestrator is available, prefer it to demonstrate
     # agentic orchestration. Otherwise fallback to the procedural pipeline.
-    if run_pipeline_langchain is not None:
+    if run_pipeline_agents is not None:
         try:
-            return run_pipeline_langchain(file_path, input_type=input_type)
+            return run_pipeline_agents(file_path, file_type=input_type)
         except Exception as e:
-            print(f"[WARN] LangChain orchestrator failed, falling back: {e}")
+            print(f"[WARN] LangGraph orchestrator failed, falling back: {e}")
 
     plan = create_plan(input_type)
     outputs = {"transcript": None, "summary": None, "insights": None, "tts": None, "video": None}

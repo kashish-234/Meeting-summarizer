@@ -1,7 +1,8 @@
 # Core
 torch
 transformers
-faster-whisper
+sentence_transformers
+faster_whisper
 sentencepiece
 tqdm
 
